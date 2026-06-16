@@ -1,185 +1,280 @@
 # Telecom Customer 360 – Cloud Data Warehouse & Fraud Analytics
 
+An end-to-end Data Engineering project that detects and classifies harmful calling behavior such as **Vishing (Voice Phishing)** and **Telephone Harassment** using a transparent, explainable rule-based fraud scoring engine.
 
-##  Project Overview
+The platform processes **1.4 million call records** for **5,000 telecom customers** over a **3-month period** and generates a **Fraud Score (0–100)** to classify customers into risk levels.
 
-**Telecom Customer 360** is an end-to-end data engineering pipeline designed to detect and classify **harmful calling behavior** – including **vishing (voice phishing)** and **telephone harassment** – using a transparent, rule-based scoring engine.
+## Project Objective
 
-The platform processes **1.4 million call records** for **5,000 customers** in **Nasr City** over **3 months**, applying **9 behavioral rules (6 Negative + 3 Positive)** to generate a **Fraud Score (0–100)** and classify customers into **4 risk levels**:
+Build a scalable cloud data platform that:
 
-| Risk Level | Score Range | Action Required |
-|------------|-------------|-----------------|
-| 🔴 **Critical** | 80 – 100 | Immediate investigation required |
-| 🟠 **High** | 60 – 79 | High probability – investigate |
-| 🟡 **Medium** | 30 – 59 | Suspicious – needs monitoring |
-| 🟢 **Low** | 0 – 29 | Normal behavior – no action needed |
-
-> **Core Innovation:** Fully explainable fraud detection – every score can be traced back to the exact rule that triggered it.
+* Processes telecom customer data at scale.
+* Detects suspicious calling behavior.
+* Generates explainable fraud scores.
+* Provides actionable business insights through dashboards.
+* Implements a complete Medallion Architecture pipeline.
 
 ---
 
-##  System Architecture (Medallion)
-┌─────────────────────────────────────────────────────────────────┐
-│ BRONZE LAYER (Raw Data) │
-│ • Raw CSV files (calls, recharges, complaints, customers) │
-│ • Azure Data Lake Storage Gen2 │
-└─────────────────────────────────────────────────────────────────┘
-│
-▼ (Azure Databricks – PySpark)
-┌─────────────────────────────────────────────────────────────────┐
-│ SILVER LAYER (Cleaned) │
-│ • 13 data quality rules applied │
-│ • Deduplication & validation │
-│ • Output: Parquet files │
-└─────────────────────────────────────────────────────────────────┘
-│
-▼ (Azure Databricks – Feature Engineering)
-┌─────────────────────────────────────────────────────────────────┐
-│ GOLD LAYER (Aggregated) │
-│ • Feature engineering per customer │
-│ • 9-rule Fraud Scoring Engine │
-│ • Fraud Score (0–100) & Risk Level │
-└─────────────────────────────────────────────────────────────────┘
-│
-▼ (Azure SQL Database)
-┌─────────────────────────────────────────────────────────────────┐
-│ STAR SCHEMA (Data Warehouse) │
-│ • 1 Fact Table (fact_events_dedup) │
-│ • 8 Dimension Tables (customer, date, location, plan, etc.) │
-└─────────────────────────────────────────────────────────────────┘
-│
-▼ (Power BI)
-┌─────────────────────────────────────────────────────────────────┐
-│ 4-PAGE INTERACTIVE DASHBOARD │
-│ 1. Executive Dashboard │ 2. Fraud Analysis │
-│ 3. Customer Behaviour │ 4. Complaints Analytics │
-└─────────────────────────────────────────────────────────────────┘
+## Risk Classification
 
-text
+| Risk Level  | Score Range | Action                           |
+| ----------- | ----------- | -------------------------------- |
+| 🔴 Critical | 80 – 100    | Immediate investigation required |
+| 🟠 High     | 60 – 79     | High probability – investigate   |
+| 🟡 Medium   | 30 – 59     | Needs monitoring                 |
+| 🟢 Low      | 0 – 29      | Normal behavior                  |
+
+> Every fraud score is fully explainable and can be traced back to the exact rule that triggered it.
 
 ---
 
-##  Technology Stack
+# Architecture
 
-| Layer | Technology | Purpose |
-|-------|------------|---------|
-| **Data Lake** | Azure Data Lake Storage Gen2 | Raw & cleaned data storage |
-| **Processing** | Azure Databricks (PySpark) | Distributed data transformation |
-| **Data Warehouse** | Azure SQL Database | Star Schema (1 Fact + 8 Dims) |
-| **Fraud Logic** | Rule-Based Engine (SQL) | 9 rules: 6 Negative + 3 Positive |
-| **Visualization** | Power BI Desktop & Service | 4-page interactive dashboard |
-| **Data Generation** | Python (pandas, NumPy) | Simulated dataset (5,000 customers) |
-
----
-
-##  Fraud Rules Engine
-
-### 🔴 Negative Indicators (Increase Score)
-
-| # | Rule | Condition | Weight |
-|---|------|-----------|--------|
-| 1 | High Call Frequency | > 60 calls per day | +20 |
-| 2 | Very Short Calls | Average duration < 10 seconds | +15 |
-| 3 | Repeated Calls | > 10 calls to same number in 1 hour | +15 |
-| 4 | Random Number Pattern | > 20 new numbers/day + answer rate < 20% | +20 |
-| 5 | Complaints | Any complaint (fraud/harassment/scam) | +30 |
-| 6 | High Off-net + Complaints | Off-net > 60% AND complaints exist | +15 |
-
-### 🟢 Positive Indicators (Decrease Score)
-
-| # | Rule | Condition | Weight |
-|---|------|-----------|--------|
-| 7 | Number Correction | Same number with 1-2 digit difference | -5 |
-| 8 | Normal Call Duration | Average duration between 60–300 seconds | -10 |
-| 9 | Regular Recharge Pattern | Consistent recharge day & amount (weekly routine) | -10 |
-
-### 📈 Risk Score Calculation
-Risk Score = (sum of negative weights) - (sum of positive weights)
-Risk Score = max(0, min(100, Risk Score))
-
-text
+```
+Raw CSV Files
+       │
+       ▼
+Azure Data Lake Storage Gen2
+(Bronze Layer)
+       │
+       ▼
+Azure Databricks (PySpark)
+(Silver Layer)
+       │
+       ▼
+Feature Engineering + Fraud Engine
+(Gold Layer)
+       │
+       ▼
+Azure SQL Database
+(Star Schema)
+       │
+       ▼
+Power BI Dashboard
+```
 
 ---
 
-##  Key Results
+# Medallion Architecture
 
-| Metric | Value |
-|--------|-------|
-| **Calls Processed** | 1.4 Million |
-| **Customers Profiled** | 5,000 |
-| **Fraud Rules** | 9 (6 Negative + 3 Positive) |
-| **High/Critical Risk Customers** | 115 |
-| **Data Quality** | 98.8% (after 13 cleaning rules) |
-| **Pipeline Runtime** | ~15 minutes |
-| **Idempotency** | Verified (3 re-runs – identical results) |
+##  Bronze Layer
 
-### Risk Distribution
-┌─────────────────────────────────────────────────────────────────┐
-│ Risk Distribution │
-│ │
-│ 🟢 Low ██████████████████████████████████████████ 65% │
-│ 🟡 Medium ████████████████████████████ 25% │
-│ 🟠 High ████████████████ 8% │
-│ 🔴 Critical ████ 2% │
-│ │
-│ Total: 5,000 Customers │
-└─────────────────────────────────────────────────────────────────┘
+Raw data ingestion.
 
-text
+Sources:
+
+* Calls
+* Customers
+* Recharges
+* Complaints
+
+Storage:
+
+* Azure Data Lake Storage Gen2
 
 ---
 
-##  Power BI Dashboard (4 Pages)
+##  Silver Layer
 
-### 1. Executive Dashboard
-- KPIs: Total Calls, Revenue, Fraud Rate, Active Customers
-- Fraud Rate Gauge
-- Revenue by Plan (Bar Chart)
-- Monthly Revenue Trend (Line Chart)
+Data cleaning and validation.
 
-### 2. Fraud Analysis
-- Top 5 High-Risk Customers (Table)
-- Risk Distribution (Donut Chart)
-- Behavioral Patterns Detected
-- Risk Level Slicer
+Tasks:
 
-### 3. Customer Behaviour
-- Age Distribution
-- Subscription Type (Prepaid/Postpaid)
-- Avg Call Duration by Plan
-- Recharge Channel Popularity
+* Data quality checks
+* Deduplication
+* Missing values handling
+* Data validation
 
-### 4. Complaints Analytics
-- Total Complaints, Avg Resolution Days, Open Complaints
-- Complaints by Category
-- Complaints by Month (Trend)
-- Severity Slicer
+Output:
+
+* Parquet files
+
+Applied:
+
+* 13 Data Quality Rules
 
 ---
 
-##  Team
+##  Gold Layer
 
-| Member | Role | Key Contributions |
-|--------|------|-------------------|
-| **Doaa** | Presentation Lead | Storytelling, business value framing, Q&A |
-| **Wesam** | Data Engineering | Medallion pipeline, PySpark, fraud rules engine |
-| **Esraa** | Data Warehousing & BI | Star Schema, Power BI dashboard, KPIs, documentation |
+Feature engineering and fraud analysis.
+
+Outputs:
+
+* Customer behavioral features
+* Fraud score (0–100)
+* Risk classification
 
 ---
 
-##  Repository Structure
+# Technology Stack
+
+| Layer           | Technology                   | Purpose             |
+| --------------- | ---------------------------- | ------------------- |
+| Storage         | Azure Data Lake Storage Gen2 | Raw & cleaned data  |
+| Processing      | Azure Databricks (PySpark)   | Data transformation |
+| Data Warehouse  | Azure SQL Database           | Star Schema         |
+| Fraud Engine    | SQL Rule-Based Engine        | Fraud detection     |
+| Visualization   | Power BI                     | Dashboards          |
+| Data Generation | Python (Pandas, NumPy)       | Simulated dataset   |
+
+---
+
+# Fraud Rules Engine
+
+## 🔴 Negative Indicators
+
+| Rule                  | Description                              | Weight |
+| --------------------- | ---------------------------------------- | ------ |
+| High Call Frequency   | > 60 calls/day                           | +20    |
+| Very Short Calls      | Avg duration < 10 sec                    | +15    |
+| Repeated Calls        | > 10 calls/hour to same number           | +15    |
+| Random Number Pattern | > 20 new numbers/day + answer rate < 20% | +20    |
+| Complaints            | Fraud/Harassment complaints              | +30    |
+| High Off-net Usage    | Off-net > 60% + complaints               | +15    |
+
+---
+
+## 🟢 Positive Indicators
+
+| Rule                     | Description                | Weight |
+| ------------------------ | -------------------------- | ------ |
+| Number Correction        | 1–2 digit difference       | -5     |
+| Normal Call Duration     | 60–300 sec                 | -10    |
+| Regular Recharge Pattern | Consistent weekly behavior | -10    |
+
+---
+
+# Fraud Score Formula
+
+```text
+Fraud Score =
+(Sum of Negative Rules)
+-
+(Sum of Positive Rules)
+
+Fraud Score = max(0, min(100, Fraud Score))
+```
+
+---
+
+# Project Results
+
+| Metric                       | Value       |
+| ---------------------------- | ----------- |
+| Calls Processed              | 1.4 Million |
+| Customers                    | 5,000       |
+| Fraud Rules                  | 9           |
+| High/Critical Risk Customers | 115         |
+| Data Quality                 | 98.8%       |
+| Runtime                      | ~15 Minutes |
+| Idempotency                  | Verified    |
+
+---
+
+# Risk Distribution
+
+```text
+🟢 Low       65%
+🟡 Medium    25%
+🟠 High       8%
+🔴 Critical   2%
+
+Total Customers: 5,000
+```
+
+---
+
+# Data Warehouse Design
+
+Star Schema:
+
+### Fact Table
+
+* fact_events_dedup
+
+### Dimension Tables
+
+* dim_customer
+* dim_date
+* dim_location
+* dim_plan
+* dim_subscription
+* dim_recharge
+* dim_complaint
+* dim_risk
+
+---
+
+# Power BI Dashboard
+
+## Executive Dashboard
+
+* Total Calls
+* Revenue
+* Fraud Rate
+* Active Customers
+* Revenue Trend
+
+## Fraud Analysis
+
+* Top 5 High-Risk Customers
+* Risk Distribution
+* Behavioral Patterns
+
+## Customer Behaviour
+
+* Age Distribution
+* Subscription Type
+* Average Call Duration
+* Recharge Channels
+
+## Complaints Analytics
+
+* Total Complaints
+* Resolution Days
+* Complaint Categories
+* Monthly Trend
+
+---
+
+# Repository Structure
+
+```text
 Telecom-Customer-360/
-├── bronze/ # Raw CSV data
-├── silver/ # Cleaned Parquet files
-├── gold/ # Aggregated features & fraud scores
-├── scripts/ # Python scripts (data generation, cleaning)
-├── notebooks/ # Databricks notebooks
-├── reports/ # Data quality reports
-├── docs/ # Architecture diagrams
 
+├── bronze/
+├── silver/
+├── gold/
 
+├── scripts/
+├── notebooks/
+├── reports/
+├── docs/
 
+└── README.md
+```
 
 ---
 
-**Made with ❤️ as a Data Engineering Capstone Project – June 2026**
+# Team
+
+| Member | Role                | Contribution                              |
+| ------ | ------------------- | ----------------------------------------- |
+| Doaa   | Presentation Lead   | Storytelling, Business Value, Q&A         |
+| Wesam  | Data Engineer       | Medallion Pipeline, PySpark, Fraud Engine |
+| Esraa  | BI & Data Warehouse | Star Schema, Power BI, Documentation      |
+
+---
+
+# Future Improvements
+
+* Machine Learning fraud detection.
+* Real-time streaming using Azure Event Hub.
+* Automated alerts for Critical Risk customers.
+* CI/CD deployment pipeline.
+
+---
+
+**Data Engineering Capstone Project — June 2026**
