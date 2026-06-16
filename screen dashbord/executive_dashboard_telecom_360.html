@@ -1,0 +1,123 @@
+
+<style>
+  .db-root { font-family: var(--font-sans); background: #f4f6fa; padding: 16px; border-radius: 12px; }
+  .db-title { font-size: 17px; font-weight: 500; color: #1a2a4a; margin: 0 0 14px; padding-bottom: 10px; border-bottom: 2px solid #1565c0; letter-spacing: 0.3px; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
+  .kpi-card { background: #fff; border-radius: 8px; padding: 12px 14px; border: 0.5px solid #dde3ee; }
+  .kpi-label { font-size: 11px; color: #6b7a99; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .kpi-value { font-size: 22px; font-weight: 500; color: #1a2a4a; }
+  .kpi-card.highlight .kpi-value { color: #1565c0; }
+  .mid-row { display: grid; grid-template-columns: 1fr 2fr; gap: 12px; margin-bottom: 14px; }
+  .chart-card { background: #fff; border-radius: 8px; padding: 12px 14px; border: 0.5px solid #dde3ee; }
+  .chart-title { font-size: 12px; font-weight: 500; color: #1a2a4a; margin-bottom: 10px; }
+  .gauge-wrap { display: flex; flex-direction: column; align-items: center; }
+  .bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  .slicer-row { display: flex; gap: 10px; }
+  .slicer { background: #e8ebf2; border-radius: 6px; padding: 7px 16px; font-size: 12px; color: #4a5573; border: 0.5px solid #c5cedf; flex: 1; text-align: center; }
+  .slicer span { display: block; font-size: 10px; color: #8a95b0; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .legend-row { display: flex; gap: 14px; font-size: 11px; color: #6b7a99; margin-top: 6px; flex-wrap: wrap; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 4px; }
+</style>
+<div class="db-root">
+  <h2 class="sr-only">Executive Dashboard – Telecom Customer 360 showing KPIs, revenue charts, fraud gauge, and slicers</h2>
+  <div class="db-title">Executive Dashboard – Telecom Customer 360</div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Total Calls</div>
+      <div class="kpi-value">1.43M</div>
+    </div>
+    <div class="kpi-card highlight">
+      <div class="kpi-label">Total Revenue</div>
+      <div class="kpi-value">5.2M EGP</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Fraud Rate</div>
+      <div class="kpi-value" style="color:#e65c00;">2.3%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Active Customers</div>
+      <div class="kpi-value">5,000</div>
+    </div>
+  </div>
+
+  <div class="mid-row">
+    <div class="chart-card gauge-wrap">
+      <div class="chart-title" style="text-align:center;">Fraud Rate Gauge</div>
+      <svg viewBox="0 0 220 130" width="100%" style="max-width:220px;">
+        <defs>
+          <linearGradient id="gArc" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#43a047"/>
+            <stop offset="50%" stop-color="#ffb300"/>
+            <stop offset="80%" stop-color="#e53935"/>
+          </linearGradient>
+        </defs>
+        <path d="M 20 110 A 90 90 0 0 1 200 110" fill="none" stroke="#e4e7ef" stroke-width="18" stroke-linecap="round"/>
+        <path d="M 20 110 A 90 90 0 0 1 200 110" fill="none" stroke="url(#gArc)" stroke-width="18" stroke-linecap="round"/>
+        <text x="14" y="126" font-size="9" fill="#43a047" font-family="sans-serif">0%</text>
+        <text x="100" y="20" font-size="9" fill="#ffb300" font-family="sans-serif" text-anchor="middle">5%</text>
+        <text x="197" y="126" font-size="9" fill="#e53935" font-family="sans-serif" text-anchor="end">10%</text>
+        <line x1="110" y1="110" x2="67" y2="42" stroke="#1a2a4a" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="110" cy="110" r="6" fill="#1a2a4a"/>
+        <text x="110" y="100" font-size="18" font-weight="500" fill="#1a2a4a" font-family="sans-serif" text-anchor="middle">2.3%</text>
+        <text x="110" y="128" font-size="9" fill="#6b7a99" font-family="sans-serif" text-anchor="middle">Fraud Rate (0–10%)</text>
+      </svg>
+      <div class="legend-row" style="justify-content:center;">
+        <span><span class="legend-dot" style="background:#43a047;"></span>Safe 0–5%</span>
+        <span><span class="legend-dot" style="background:#ffb300;"></span>Watch 5–8%</span>
+        <span><span class="legend-dot" style="background:#e53935;"></span>Risk 8–10%</span>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+      <div class="chart-card">
+        <div class="chart-title">Revenue by Plan</div>
+        <div style="position:relative;height:160px;"><canvas id="barChart" role="img" aria-label="Bar chart of revenue by plan. Prepaid 100: 1.02M, Postpaid 150: 0.95M, Student Plan: 0.87M, Prepaid 50: 0.79M">Revenue by plan data</canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Monthly Revenue Trend</div>
+        <div style="position:relative;height:160px;"><canvas id="lineChart" role="img" aria-label="Line chart showing monthly revenue Jan 1.2M, Feb 1.8M, Mar 2.2M">Monthly revenue trend data</canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slicer-row">
+    <div class="slicer"><span>Filter</span>Month ▾</div>
+    <div class="slicer"><span>Filter</span>Plan ▾</div>
+    <div class="slicer"><span>Filter</span>Region ▾</div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+new Chart(document.getElementById('barChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Prepaid 100','Postpaid 150','Student Plan','Prepaid 50'],
+    datasets: [{ label: 'Revenue (M EGP)', data: [1.02, 0.95, 0.87, 0.79], backgroundColor: ['#1565c0','#1976d2','#1e88e5','#42a5f5'], borderRadius: 4 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { color: '#eef0f5' }, ticks: { font: { size: 10 }, callback: v => v + 'M', color: '#6b7a99' } },
+      y: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#1a2a4a' } }
+    }
+  }
+});
+new Chart(document.getElementById('lineChart'), {
+  type: 'line',
+  data: {
+    labels: ['Jan','Feb','Mar'],
+    datasets: [{ label: 'Revenue (M EGP)', data: [1.2, 1.8, 2.2], borderColor: '#1565c0', backgroundColor: 'rgba(21,101,192,0.08)', tension: 0.4, fill: true, pointBackgroundColor: '#1565c0', pointRadius: 5 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { grid: { color: '#eef0f5' }, ticks: { font: { size: 10 }, callback: v => v + 'M', color: '#6b7a99' }, min: 0 },
+      x: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#1a2a4a' } }
+    }
+  }
+});
+</script>

@@ -1,0 +1,113 @@
+
+<style>
+  .cb-root { font-family: var(--font-sans); background: #f4f6fa; padding: 16px; border-radius: 12px; }
+  .cb-title { font-size: 17px; font-weight: 500; color: #1a2a4a; margin: 0 0 14px; padding-bottom: 10px; border-bottom: 2px solid #1565c0; }
+  .cb-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .cb-card { background: #fff; border-radius: 8px; padding: 12px 14px; border: 0.5px solid #dde3ee; }
+  .cb-chart-title { font-size: 12px; font-weight: 500; color: #1a2a4a; margin-bottom: 10px; }
+  .region-table { width: 100%; font-size: 12px; border-collapse: collapse; }
+  .region-table th { font-size: 11px; color: #6b7a99; font-weight: 500; text-align: left; padding: 4px 6px; border-bottom: 0.5px solid #eef0f5; }
+  .region-table td { padding: 5px 6px; color: #1a2a4a; border-bottom: 0.5px solid #f4f6fa; }
+  .rank-num { color: #1565c0; font-weight: 500; }
+  .legend-row { display: flex; gap: 10px; font-size: 11px; color: #6b7a99; margin-top: 6px; flex-wrap: wrap; }
+  .legend-sq { width: 10px; height: 10px; border-radius: 2px; display: inline-block; margin-right: 3px; }
+</style>
+<div class="cb-root">
+  <h2 class="sr-only">Customer Behaviour and Usage Patterns dashboard with age distribution, subscription type, call duration, recharge channels, and top regions</h2>
+  <div class="cb-title">Customer Behaviour &amp; Usage Patterns</div>
+
+  <div class="cb-grid2">
+    <div class="cb-card">
+      <div class="cb-chart-title">Age Distribution</div>
+      <div style="position:relative;height:150px;"><canvas id="ageBar" role="img" aria-label="Bar chart: 18-25: 20%, 26-35: 35%, 36-50: 30%, 50+: 15%">Age distribution data</canvas></div>
+    </div>
+    <div class="cb-card">
+      <div class="cb-chart-title">Subscription Type</div>
+      <div style="position:relative;height:150px;"><canvas id="subPie" role="img" aria-label="Pie chart: Prepaid 70%, Postpaid 30%">Subscription type data</canvas></div>
+      <div class="legend-row" style="justify-content:center; margin-top:4px;">
+        <span><span class="legend-sq" style="background:#1565c0;"></span>Prepaid 70%</span>
+        <span><span class="legend-sq" style="background:#90caf9;"></span>Postpaid 30%</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cb-card" style="margin-bottom:12px;">
+    <div class="cb-chart-title">Avg Call Duration (min) by Plan</div>
+    <div style="position:relative;height:140px;"><canvas id="durationLine" role="img" aria-label="Line chart showing average call duration by plan. Prepaid 100: 4.2 min, Postpaid 150: 7.8 min, Student Plan: 3.5 min, Prepaid 50: 3.0 min">Call duration data</canvas></div>
+  </div>
+
+  <div class="cb-grid2">
+    <div class="cb-card">
+      <div class="cb-chart-title">Recharge Channel Popularity</div>
+      <div style="position:relative;height:150px;"><canvas id="rechargeBar" role="img" aria-label="Bar chart: Mobile App 45%, KIOSK 30%, Website 15%, Bank Transfer 10%">Recharge channel data</canvas></div>
+    </div>
+    <div class="cb-card">
+      <div class="cb-chart-title">Top Regions by Calls</div>
+      <table class="region-table">
+        <thead><tr><th>#</th><th>Region</th><th>Share</th></tr></thead>
+        <tbody>
+          <tr><td class="rank-num">1</td><td>Nasr City</td><td style="color:#1565c0; font-weight:500;">38%</td></tr>
+          <tr><td class="rank-num">2</td><td>Maadi</td><td style="color:#1565c0; font-weight:500;">27%</td></tr>
+          <tr><td class="rank-num">3</td><td>Heliopolis</td><td style="color:#1565c0; font-weight:500;">21%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+new Chart(document.getElementById('ageBar'), {
+  type: 'bar',
+  data: {
+    labels: ['18–25','26–35','36–50','50+'],
+    datasets: [{ data: [20,35,30,15], backgroundColor: ['#1565c0','#1976d2','#1e88e5','#42a5f5'], borderRadius: 4 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { grid:{color:'#eef0f5'}, ticks:{font:{size:10}, callback: v=>v+'%', color:'#6b7a99'} },
+      x: { grid:{display:false}, ticks:{font:{size:10}, color:'#1a2a4a'} }
+    }
+  }
+});
+new Chart(document.getElementById('subPie'), {
+  type: 'pie',
+  data: {
+    labels: ['Prepaid','Postpaid'],
+    datasets: [{ data: [70,30], backgroundColor: ['#1565c0','#90caf9'], borderWidth: 2, borderColor: '#fff' }]
+  },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+});
+new Chart(document.getElementById('durationLine'), {
+  type: 'line',
+  data: {
+    labels: ['Prepaid 100','Postpaid 150','Student Plan','Prepaid 50'],
+    datasets: [{ data: [4.2,7.8,3.5,3.0], borderColor:'#1565c0', backgroundColor:'rgba(21,101,192,0.08)', tension:0.4, fill:true, pointBackgroundColor:'#1565c0', pointRadius:5 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend:{display:false} },
+    scales: {
+      y: { grid:{color:'#eef0f5'}, ticks:{font:{size:10}, color:'#6b7a99'}, min:0 },
+      x: { grid:{display:false}, ticks:{font:{size:10}, color:'#1a2a4a'} }
+    }
+  }
+});
+new Chart(document.getElementById('rechargeBar'), {
+  type: 'bar',
+  data: {
+    labels: ['Mobile App','KIOSK','Website','Bank Transfer'],
+    datasets: [{ data: [45,30,15,10], backgroundColor:['#1565c0','#1976d2','#1e88e5','#42a5f5'], borderRadius:4 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false, indexAxis:'y',
+    plugins: { legend:{display:false} },
+    scales: {
+      x: { grid:{color:'#eef0f5'}, ticks:{font:{size:10}, callback:v=>v+'%', color:'#6b7a99'} },
+      y: { grid:{display:false}, ticks:{font:{size:10}, color:'#1a2a4a'} }
+    }
+  }
+});
+</script>

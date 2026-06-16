@@ -1,0 +1,109 @@
+
+<style>
+  .cq-root { font-family: var(--font-sans); background: #f4f6fa; padding: 16px; border-radius: 12px; }
+  .cq-title { font-size: 17px; font-weight: 500; color: #1a2a4a; margin: 0 0 14px; padding-bottom: 10px; border-bottom: 2px solid #6a1b9a; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+  .kpi-card { background: #fff; border-radius: 8px; padding: 12px 14px; border: 0.5px solid #dde3ee; }
+  .kpi-label { font-size: 11px; color: #6b7a99; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .kpi-value { font-size: 22px; font-weight: 500; color: #1a2a4a; }
+  .cq-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .cq-card { background: #fff; border-radius: 8px; padding: 12px 14px; border: 0.5px solid #dde3ee; }
+  .cq-chart-title { font-size: 12px; font-weight: 500; color: #1a2a4a; margin-bottom: 10px; }
+  .rbar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; font-size: 11px; }
+  .rbar-label { width: 80px; color: #6b7a99; }
+  .rbar-track { flex: 1; background: #eef0f5; border-radius: 3px; height: 9px; }
+  .rbar-fill { height: 9px; border-radius: 3px; }
+  .rbar-val { width: 30px; text-align: right; color: #6a1b9a; font-weight: 500; }
+  .slicer-wrap { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .slicer-label { font-size: 11px; color: #6b7a99; text-transform: uppercase; letter-spacing: 0.4px; }
+  .sev-btn { padding: 5px 14px; border-radius: 5px; border: 0.5px solid #c5cedf; font-size: 11px; background: #eef0f5; color: #4a5573; cursor: default; }
+  .sev-btn.active { background: #6a1b9a; color: #fff; border-color: #6a1b9a; }
+</style>
+<div class="cq-root">
+  <h2 class="sr-only">Complaints Analytics – Service Quality dashboard with KPI cards, category breakdown, monthly trend, district breakdown and severity slicer</h2>
+  <div class="cq-title">Complaints Analytics – Service Quality</div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Total Complaints</div>
+      <div class="kpi-value" style="color:#6a1b9a;">349</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Avg Resolution Days</div>
+      <div class="kpi-value">5.2</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Open Complaints</div>
+      <div class="kpi-value" style="color:#c62828;">42</div>
+    </div>
+  </div>
+
+  <div class="cq-grid2">
+    <div class="cq-card">
+      <div class="cq-chart-title">Complaints by Category</div>
+      <div style="position:relative;height:160px;"><canvas id="catBar" role="img" aria-label="Horizontal bar chart: Billing 40%, Network 30%, SIM Issue 15%, Fraud 10%, Other 5%">Category complaints data</canvas></div>
+    </div>
+    <div class="cq-card">
+      <div class="cq-chart-title">Complaints by Month</div>
+      <div style="position:relative;height:160px;"><canvas id="monthBar" role="img" aria-label="Bar chart showing monthly complaints: Jan 100, Feb 120, Mar 129">Monthly complaints data</canvas></div>
+    </div>
+  </div>
+
+  <div class="cq-grid2">
+    <div class="cq-card">
+      <div class="cq-chart-title">Complaints by District</div>
+      <div class="rbar-row"><span class="rbar-label">Nasr City</span><div class="rbar-track"><div class="rbar-fill" style="width:45%; background:#6a1b9a;"></div></div><span class="rbar-val">45%</span></div>
+      <div class="rbar-row"><span class="rbar-label">Downtown</span><div class="rbar-track"><div class="rbar-fill" style="width:30%; background:#8e24aa;"></div></div><span class="rbar-val">30%</span></div>
+      <div class="rbar-row"><span class="rbar-label">Maadi</span><div class="rbar-track"><div class="rbar-fill" style="width:25%; background:#ab47bc;"></div></div><span class="rbar-val">25%</span></div>
+      <div style="margin-top:10px; background:#f3e5f5; border-radius:6px; padding:6px 10px; font-size:10px; color:#7b1fa2; text-align:center;">District-level complaint map</div>
+    </div>
+    <div class="cq-card">
+      <div class="cq-chart-title" style="margin-bottom:8px;">Severity Filter</div>
+      <div style="font-size:10px; color:#6b7a99; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.4px;">Select severity level</div>
+      <div class="slicer-wrap">
+        <button class="sev-btn">Low</button>
+        <button class="sev-btn active">Medium</button>
+        <button class="sev-btn">High</button>
+        <button class="sev-btn">Critical</button>
+      </div>
+      <div style="margin-top:14px; padding: 10px; background:#f3e5f5; border-radius:6px; font-size:11px; color:#6b7a99;">
+        <div style="color:#6a1b9a; font-weight:500; margin-bottom:4px;">Medium severity selected</div>
+        Showing 127 of 349 total complaints · Avg resolution: 4.8 days
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+new Chart(document.getElementById('catBar'), {
+  type: 'bar',
+  data: {
+    labels: ['Billing','Network','SIM Issue','Fraud','Other'],
+    datasets: [{ data: [40,30,15,10,5], backgroundColor:['#6a1b9a','#7b1fa2','#8e24aa','#9c27b0','#ce93d8'], borderRadius:3 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false, indexAxis:'y',
+    plugins: { legend:{display:false} },
+    scales: {
+      x: { grid:{color:'#eef0f5'}, ticks:{font:{size:10}, callback:v=>v+'%', color:'#6b7a99'}, max:50 },
+      y: { grid:{display:false}, ticks:{font:{size:10}, color:'#1a2a4a'} }
+    }
+  }
+});
+new Chart(document.getElementById('monthBar'), {
+  type: 'bar',
+  data: {
+    labels: ['Jan','Feb','Mar'],
+    datasets: [{ data: [100,120,129], backgroundColor:['#6a1b9a','#7b1fa2','#8e24aa'], borderRadius:4 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend:{display:false} },
+    scales: {
+      y: { grid:{color:'#eef0f5'}, ticks:{font:{size:10}, color:'#6b7a99'}, min:0 },
+      x: { grid:{display:false}, ticks:{font:{size:10}, color:'#1a2a4a'} }
+    }
+  }
+});
+</script>

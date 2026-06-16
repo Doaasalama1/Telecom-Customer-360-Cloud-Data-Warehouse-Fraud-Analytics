@@ -1,0 +1,103 @@
+
+<style>
+  .fr-root { font-family: var(--font-sans); background: #f4f6fa; padding: 16px; border-radius: 12px; }
+  .fr-title { font-size: 17px; font-weight: 500; color: #1a2a4a; margin: 0 0 14px; padding-bottom: 10px; border-bottom: 2px solid #c62828; }
+  .fr-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .fr-card { background: #fff; border-radius: 8px; padding: 12px 14px; border: 0.5px solid #dde3ee; }
+  .fr-chart-title { font-size: 12px; font-weight: 500; color: #1a2a4a; margin-bottom: 10px; }
+  .risk-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .risk-table th { text-align: left; padding: 6px 8px; background: #f0f2f8; color: #6b7a99; font-weight: 500; font-size: 11px; }
+  .risk-table td { padding: 6px 8px; border-bottom: 0.5px solid #eef0f5; color: #1a2a4a; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 500; }
+  .badge-critical { background: #fde8e8; color: #b71c1c; }
+  .badge-high { background: #fff3e0; color: #bf360c; }
+  .badge-medium { background: #fffde7; color: #f57f17; }
+  .slicer { background: #e8ebf2; border-radius: 6px; padding: 7px 16px; font-size: 12px; color: #4a5573; border: 0.5px solid #c5cedf; display: inline-block; min-width: 120px; }
+  .slicer span { display: block; font-size: 10px; color: #8a95b0; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .region-bar { margin-top: 4px; }
+  .rbar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; font-size: 11px; color: #1a2a4a; }
+  .rbar-label { width: 90px; color: #6b7a99; }
+  .rbar-track { flex: 1; background: #eef0f5; border-radius: 3px; height: 9px; }
+  .rbar-fill { height: 9px; border-radius: 3px; background: #1565c0; }
+  .rbar-val { width: 30px; text-align: right; color: #1565c0; font-weight: 500; }
+  .legend-row { display: flex; gap: 10px; font-size: 11px; color: #6b7a99; margin-top: 6px; flex-wrap: wrap; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 3px; }
+</style>
+<div class="fr-root">
+  <h2 class="sr-only">Fraud Analysis – Risk Segmentation dashboard with customer risk table, donut chart, fraud event types, and regional breakdown</h2>
+  <div class="fr-title">Fraud Analysis – Risk Segmentation</div>
+
+  <div class="fr-grid2">
+    <div class="fr-card">
+      <div class="fr-chart-title">High-Risk Customers</div>
+      <table class="risk-table">
+        <thead><tr><th>Customer ID</th><th>Fraud Score</th><th>Risk Level</th></tr></thead>
+        <tbody>
+          <tr><td>CUST_1023</td><td>95</td><td><span class="badge badge-critical">Critical</span></td></tr>
+          <tr><td>CUST_4512</td><td>82</td><td><span class="badge badge-high">High</span></td></tr>
+          <tr><td>CUST_7834</td><td>76</td><td><span class="badge badge-high">High</span></td></tr>
+          <tr><td>CUST_2345</td><td>65</td><td><span class="badge badge-medium">Medium</span></td></tr>
+          <tr><td>CUST_9876</td><td>58</td><td><span class="badge badge-medium">Medium</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="fr-card">
+      <div class="fr-chart-title">Risk Distribution</div>
+      <div style="position:relative;height:170px;"><canvas id="donutChart" role="img" aria-label="Donut chart: Low 65%, Medium 25%, High 8%, Critical 2%">Risk distribution: Low 65%, Medium 25%, High 8%, Critical 2%</canvas></div>
+      <div class="legend-row">
+        <span><span class="legend-dot" style="background:#43a047;"></span>Low 65%</span>
+        <span><span class="legend-dot" style="background:#ffb300;"></span>Medium 25%</span>
+        <span><span class="legend-dot" style="background:#ef6c00;"></span>High 8%</span>
+        <span><span class="legend-dot" style="background:#e53935;"></span>Critical 2%</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="fr-grid2">
+    <div class="fr-card">
+      <div class="fr-chart-title">Fraud Events by Type</div>
+      <div style="position:relative;height:160px;"><canvas id="fraudBar" role="img" aria-label="Horizontal bar chart of fraud event types. High-frequency calling 45%, International abuse 30%, Short call spam 15%, SIM swap 7%, Recharge laundering 3%">Fraud types data</canvas></div>
+    </div>
+
+    <div class="fr-card">
+      <div class="fr-chart-title">Fraud by Region</div>
+      <div class="region-bar">
+        <div class="rbar-row"><span class="rbar-label">Greater Cairo</span><div class="rbar-track"><div class="rbar-fill" style="width:45%;"></div></div><span class="rbar-val">45%</span></div>
+        <div class="rbar-row"><span class="rbar-label">Alexandria</span><div class="rbar-track"><div class="rbar-fill" style="width:25%; background:#1976d2;"></div></div><span class="rbar-val">25%</span></div>
+        <div class="rbar-row"><span class="rbar-label">Delta</span><div class="rbar-track"><div class="rbar-fill" style="width:20%; background:#1e88e5;"></div></div><span class="rbar-val">20%</span></div>
+        <div class="rbar-row"><span class="rbar-label">Upper Egypt</span><div class="rbar-track"><div class="rbar-fill" style="width:10%; background:#42a5f5;"></div></div><span class="rbar-val">10%</span></div>
+      </div>
+      <div style="margin-top:10px; background:#eef4fc; border-radius:6px; padding:8px 10px; font-size:11px; color:#6b7a99; text-align:center;">🗺 Regional breakdown (Egypt governorates)</div>
+    </div>
+  </div>
+
+  <div><div class="slicer"><span>Filter</span>Risk Level ▾</div></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+new Chart(document.getElementById('donutChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Low','Medium','High','Critical'],
+    datasets: [{ data: [65, 25, 8, 2], backgroundColor: ['#43a047','#ffb300','#ef6c00','#e53935'], borderWidth: 2, borderColor: '#fff', hoverOffset: 4 }]
+  },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, cutout: '60%' }
+});
+new Chart(document.getElementById('fraudBar'), {
+  type: 'bar',
+  data: {
+    labels: ['High-freq calling','Intl abuse','Short call spam','SIM swap','Recharge launder'],
+    datasets: [{ data: [45,30,15,7,3], backgroundColor: ['#c62828','#d32f2f','#ef5350','#ef9a9a','#ffcdd2'], borderRadius: 3 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { color: '#eef0f5' }, ticks: { font:{size:10}, callback: v => v+'%', color:'#6b7a99' }, max: 50 },
+      y: { grid: { display: false }, ticks: { font:{size:10}, color:'#1a2a4a' } }
+    }
+  }
+});
+</script>
